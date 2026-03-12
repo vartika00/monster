@@ -1,6 +1,7 @@
 from typing import TypedDict, List, Dict
 from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
+import google.generativeai as genai
 import os
 import subprocess
 import tempfile
@@ -30,6 +31,11 @@ class PipelineAgent:
         self.retry_limit = retry_limit
         self.sandbox = sandbox
         self.llm = ChatOpenAI(model="gpt-4", temperature=0)
+        
+        # Initialize Gemini for error analysis
+        genai.configure(api_key=os.getenv("GEMINI_API_KEY", ""))
+        self.gemini = genai.GenerativeModel("gemini-1.5-flash")
+        
         self.graph = self._build_graph()
     
     def _build_graph(self):
@@ -81,29 +87,93 @@ class PipelineAgent:
         return state
     
     async def analyze_failures_agent(self, state: PipelineState) -> PipelineState:
-        print("Analyzing failures...")
+        print("Analyzing failures with Gemini AI...")
         if not state["failures"]:
             state["status"] = "PASSED"
             return state
         
         state["fixes"] = []
         for failure in state["failures"]:
-            fix = {
-                "file": failure["file"],
-                "line": failure["line"],
-                "bugType": failure["bugType"],
-                "original_error": failure["error"],
-                "suggested_fix": f"Fix {failure['bugType']} error in {failure['file']}",
-                "status": "pending"
-            }
+            try:
+                # Use Gemini to analyze the error
+                prompt = f"""Analyze this {state['language']} error:
+
+File: {failure['file']}
+Line: {failure['line']}
+Error: {failure['error']}
+Type: {failure['bugType']}
+
+Provide:
+1. Root cause (1 sentence)
+2. Fix strategy (1 sentence)
+3. Bug classification: SYNTAX, LINTING, LOGIC, TYPE_ERROR, IMPORT, or INDENTATION
+
+Be concise."""
+                
+                response = self.gemini.generate_content(prompt)
+                analysis = response.text
+                
+                fix = {
+                    "file": failure["file"],
+                    "line": failure["line"],
+                    "bugType": failure["bugType"],
+                    "original_error": failure["error"],
+                    "suggested_fix": analysis,
+                    "ai_analysis": "gemini-1.5-flash",
+                    "status": "analyzed"
+                }
+            except Exception as e:
+                print(f"Gemini analysis failed: {e}")
+                fix = {
+                    "file": failure["file"],
+                    "line": failure["line"],
+                    "bugType": failure["bugType"],
+                    "original_error": failure["error"],
+                    "suggested_fix": f"Fix {failure['bugType']} error in {failure['file']}",
+                    "ai_analysis": "fallback",
+                    "status": "pending"
+                }
             state["fixes"].append(fix)
         return state
     
     async def generate_fixes_agent(self, state: PipelineState) -> PipelineState:
-        print("Generating fixes...")
+        print("Generating fixes with Gemini AI...")
         for fix in state["fixes"]:
-            fix["status"] = "generated"
-            fix["code_change"] = f"// Fixed {fix['bugType']} error"
+            try:
+                # Read file content
+                file_path = os.path.join(state["repo_path"], fix["file"])
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as f:
+                        code_content = f.read()
+                    
+                    # Use Gemini to generate fix
+                    prompt = f"""Fix this {state['language']} error:
+
+File: {fix['file']}
+Line: {fix['line']}
+Error: {fix['original_error']}
+Type: {fix['bugType']}
+
+Code:
+```{state['language']}
+{code_content}
+```
+
+Provide ONLY the corrected code for the problematic section. No explanations."""
+                    
+                    response = self.gemini.generate_content(prompt)
+                    fix["status"] = "generated"
+                    fix["code_change"] = response.text
+                    fix["ai_generator"] = "gemini-1.5-flash"
+                else:
+                    fix["status"] = "generated"
+                    fix["code_change"] = f"// Fixed {fix['bugType']} error"
+                    fix["ai_generator"] = "fallback"
+            except Exception as e:
+                print(f"Gemini fix generation failed: {e}")
+                fix["status"] = "generated"
+                fix["code_change"] = f"// Fixed {fix['bugType']} error"
+                fix["ai_generator"] = "fallback"
         return state
     
     async def apply_fixes_agent(self, state: PipelineState) -> PipelineState:

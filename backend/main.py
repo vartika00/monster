@@ -126,88 +126,96 @@ async def health_check():
 @app.get("/auth/github")
 async def github_login():
     """Redirect to GitHub OAuth"""
-    print(f"GitHub OAuth request - Client ID: {GITHUB_CLIENT_ID}")
-    print(f"Redirect URI: {GITHUB_REDIRECT_URI}")
-    
     if not GITHUB_CLIENT_ID:
         raise HTTPException(status_code=500, detail="GitHub Client ID not configured")
     
     github_auth_url = (
         f"https://github.com/login/oauth/authorize"
         f"?client_id={GITHUB_CLIENT_ID}"
-        f"&redirect_uri={GITHUB_REDIRECT_URI}"
         f"&scope=repo,user"
     )
-    print(f"Generated auth URL: {github_auth_url}")
     return {"auth_url": github_auth_url}
 
 @app.get("/auth/github/callback")
 async def github_callback(code: str):
     """Handle GitHub OAuth callback"""
-    async with httpx.AsyncClient() as client:
-        # Exchange code for access token
-        token_response = await client.post(
-            "https://github.com/login/oauth/access_token",
-            data={
-                "client_id": GITHUB_CLIENT_ID,
-                "client_secret": GITHUB_CLIENT_SECRET,
-                "code": code,
-                "redirect_uri": GITHUB_REDIRECT_URI,
-            },
-            headers={"Accept": "application/json"},
-        )
-        
-        if token_response.status_code != 200:
-            raise HTTPException(status_code=400, detail="Failed to get access token")
-        
-        token_data = token_response.json()
-        github_token = token_data.get("access_token")
-        
-        # Get user info
-        user_response = await client.get(
-            "https://api.github.com/user",
-            headers={"Authorization": f"Bearer {github_token}"},
-        )
-        
-        if user_response.status_code != 200:
-            raise HTTPException(status_code=400, detail="Failed to get user info")
-        
-        user_data = user_response.json()
-        username = user_data.get("login")
-        
-        # Create JWT token
-        access_token = create_access_token(
-            data={"sub": username, "github_token": github_token}
-        )
-        
-        # Redirect to frontend with token
-        frontend_url = "http://localhost:5173"
-        return RedirectResponse(url=f"{frontend_url}?token={access_token}")
+    try:
+        async with httpx.AsyncClient() as client:
+            # Exchange code for access token
+            token_response = await client.post(
+                "https://github.com/login/oauth/access_token",
+                data={
+                    "client_id": GITHUB_CLIENT_ID,
+                    "client_secret": GITHUB_CLIENT_SECRET,
+                    "code": code,
+                },
+                headers={"Accept": "application/json"},
+            )
+            
+            if token_response.status_code != 200:
+                print(f"Token error: {token_response.text}")
+                return RedirectResponse(url="http://localhost:5173?error=token_failed")
+            
+            token_data = token_response.json()
+            
+            if "error" in token_data:
+                print(f"GitHub OAuth error: {token_data}")
+                return RedirectResponse(url="http://localhost:5173?error=oauth_failed")
+            
+            github_token = token_data.get("access_token")
+            
+            if not github_token:
+                print(f"No access token in response: {token_data}")
+                return RedirectResponse(url="http://localhost:5173?error=no_token")
+            
+            # Get user info
+            user_response = await client.get(
+                "https://api.github.com/user",
+                headers={
+                    "Authorization": f"token {github_token}",
+                    "Accept": "application/vnd.github.v3+json"
+                },
+            )
+            
+            if user_response.status_code != 200:
+                print(f"User info error: {user_response.status_code} - {user_response.text}")
+                return RedirectResponse(url="http://localhost:5173?error=user_info_failed")
+            
+            user_data = user_response.json()
+            username = user_data.get("login")
+            
+            if not username:
+                print(f"No username in response: {user_data}")
+                return RedirectResponse(url="http://localhost:5173?error=no_username")
+            
+            # Create JWT token
+            access_token = create_access_token(
+                data={"sub": username, "github_token": github_token}
+            )
+            
+            # Redirect to landing page with token
+            return RedirectResponse(url=f"http://localhost:5173?token={access_token}")
+            
+    except Exception as e:
+        print(f"Callback error: {str(e)}")
+        return RedirectResponse(url=f"http://localhost:5173?error={str(e)}")
 
 @app.post("/api/pipeline/run", response_model=PipelineResponse)
-async def run_pipeline(
-    request: PipelineRequest,
-    current_user: dict = Depends(get_current_user)
-):
+async def run_pipeline(request: PipelineRequest):
     """Trigger the CI/CD pipeline agent"""
     try:
-        # Initialize sandbox
         sandbox = DockerSandbox()
-        
-        # Initialize agent
         agent = PipelineAgent(
             repo_url=request.repo_url,
             team_name=request.team_name,
-            leader_name=current_user["username"],
+            leader_name=request.leader_name,
             retry_limit=request.retry_limit,
             sandbox=sandbox
         )
         
-        # Run agent
         run_id = f"{request.team_name}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
         result = await agent.run(run_id)
         
-        # Write results to JSON
         results_writer = ResultsWriter()
         results_writer.write(run_id, result)
         
@@ -216,12 +224,11 @@ async def run_pipeline(
             status=result["status"],
             message=f"Pipeline execution completed. Results saved to results/{run_id}.json"
         )
-        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/pipeline/results/{run_id}")
-async def get_results(run_id: str, current_user: dict = Depends(get_current_user)):
+async def get_results(run_id: str):
     """Get results for a specific run"""
     results_writer = ResultsWriter()
     result = results_writer.read(run_id)
@@ -249,7 +256,10 @@ async def get_profile(current_user: dict = Depends(get_current_user)):
     async with httpx.AsyncClient() as client:
         response = await client.get(
             "https://api.github.com/user",
-            headers={"Authorization": f"Bearer {current_user['github_token']}"},
+            headers={
+                "Authorization": f"token {current_user['github_token']}",
+                "Accept": "application/vnd.github.v3+json"
+            },
         )
         if response.status_code != 200:
             raise HTTPException(status_code=400, detail="Failed to get user profile")
@@ -274,7 +284,10 @@ async def get_user_repos(current_user: dict = Depends(get_current_user)):
             while len(repos) < 100:
                 response = await client.get(
                     f"https://api.github.com/user/repos?page={page}&per_page=30&sort=updated&affiliation=owner,collaborator,organization_member",
-                    headers={"Authorization": f"Bearer {current_user['github_token']}"},
+                    headers={
+                        "Authorization": f"token {current_user['github_token']}",
+                        "Accept": "application/vnd.github.v3+json"
+                    },
                 )
                 if response.status_code != 200:
                     print(f"GitHub API error: {response.status_code} - {response.text}")
@@ -443,4 +456,13 @@ Path("cloned_repos").mkdir(exist_ok=True)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    port = int(os.getenv("API_PORT", "8001"))
+    host = os.getenv("API_HOST", "0.0.0.0")
+    print(f"\n{'='*50}")
+    print(f"Starting PipelineIQ Backend Server")
+    print(f"{'='*50}")
+    print(f"Host: {host}")
+    print(f"Port: {port}")
+    print(f"API Docs: http://localhost:{port}/docs")
+    print(f"{'='*50}\n")
+    uvicorn.run(app, host=host, port=port, log_level="info")

@@ -208,7 +208,7 @@ const StatusBadge = ({ status }) => {
 
 /* ─── NAVBAR ─────────────────────────────────────────────────────────── */
 const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin }) => {
-  const tabs = isLoggedIn 
+  const tabs = isLoggedIn
     ? ["dashboard", "analyze", "results", "score", "timeline", "profile"]
     : ["analyze", "results", "score", "timeline"];
   const labels = {
@@ -1110,7 +1110,7 @@ const ScorePage = ({ results }) => (
 const TimelinePage = ({ results }) => {
   const retryLimit = 5;
   const iterationsUsed = results.timeline.length;
-  
+
   return (
     <div className="page-enter" style={{ maxWidth: 1200, margin: "0 auto", padding: "96px 48px 64px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
@@ -1146,7 +1146,7 @@ const TimelinePage = ({ results }) => {
         {results.timeline.map((run, idx) => {
           const isPassed = run.status === "PASSED";
           const isFailed = run.status === "FAILED";
-          
+
           return (
             <div key={idx} style={{ position: "relative", marginBottom: 32 }}>
               {/* Timeline Dot */}
@@ -1334,10 +1334,10 @@ const DashboardPage = ({ userProfile }) => {
 
   const filteredRepos = repos.filter(repo => {
     const matchesSearch = repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesFilter = filterType === "all" || 
-                         (filterType === "public" && !repo.private) ||
-                         (filterType === "private" && repo.private);
+      (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesFilter = filterType === "all" ||
+      (filterType === "public" && !repo.private) ||
+      (filterType === "private" && repo.private);
     return matchesSearch && matchesFilter;
   });
 
@@ -2306,106 +2306,106 @@ function ProfilePage({ userProfile }) {
           )}
         </div>
       )}
-        <div style={{
-          background: "#fff",
-          borderRadius: 20,
-          boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-          overflow: "hidden"
-        }}>
-          <div style={{ padding: "32px 40px 20px" }}>
-            <h2 style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: 24,
-              fontWeight: 700,
-              color: "#111110",
-              marginBottom: 4
-            }}>
-              Cloned Repositories
-            </h2>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 14,
-              color: "#6b6860"
-            }}>
-              Repositories you've cloned to this workspace
-            </p>
-          </div>
-          {loading ? (
-            <div style={{ padding: 40, textAlign: "center" }}>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6b6860" }}>
-                Loading cloned repositories...
-              </div>
-            </div>
-          ) : clonedRepos.length === 0 ? (
-            <div style={{ padding: 40, textAlign: "center" }}>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6b6860" }}>
-                No repositories cloned yet. Go to GitHub Repos tab to clone some!
-              </div>
-            </div>
-          ) : (
-            <div>
-              {clonedRepos.map((repo, index) => (
-                <div key={index} style={{
-                  padding: "20px 40px",
-                  borderBottom: "1px solid #f2f1ee",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}>
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: 16,
-                      fontWeight: 600,
-                      color: "#111110",
-                      margin: 0,
-                      marginBottom: 8
-                    }}>
-                      {repo.repo_name}
-                    </h3>
-                    <div style={{
-                      fontFamily: "'DM Mono', monospace",
-                      fontSize: 12,
-                      color: "#6b6860",
-                      marginBottom: 8
-                    }}>
-                      {repo.repo_url}
-                    </div>
-                    <div style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: 11,
-                      color: "#c5c3bc"
-                    }}>
-                      Cloned {new Date(repo.cloned_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveCloned(repo.repo_name)}
-                    style={{
-                      padding: "8px 16px",
-                      background: "#c0392b",
-                      color: "#fff",
-                      borderRadius: 8,
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      border: "none",
-                      transition: "all 0.2s ease"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "#a93226";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "#c0392b";
-                    }}
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+      <div style={{
+        background: "#fff",
+        borderRadius: 20,
+        boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+        overflow: "hidden"
+      }}>
+        <div style={{ padding: "32px 40px 20px" }}>
+          <h2 style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: 24,
+            fontWeight: 700,
+            color: "#111110",
+            marginBottom: 4
+          }}>
+            Cloned Repositories
+          </h2>
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 14,
+            color: "#6b6860"
+          }}>
+            Repositories you've cloned to this workspace
+          </p>
         </div>
+        {loading ? (
+          <div style={{ padding: 40, textAlign: "center" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6b6860" }}>
+              Loading cloned repositories...
+            </div>
+          </div>
+        ) : clonedRepos.length === 0 ? (
+          <div style={{ padding: 40, textAlign: "center" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6b6860" }}>
+              No repositories cloned yet. Go to GitHub Repos tab to clone some!
+            </div>
+          </div>
+        ) : (
+          <div>
+            {clonedRepos.map((repo, index) => (
+              <div key={index} style={{
+                padding: "20px 40px",
+                borderBottom: "1px solid #f2f1ee",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 16,
+                    fontWeight: 600,
+                    color: "#111110",
+                    margin: 0,
+                    marginBottom: 8
+                  }}>
+                    {repo.repo_name}
+                  </h3>
+                  <div style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: 12,
+                    color: "#6b6860",
+                    marginBottom: 8
+                  }}>
+                    {repo.repo_url}
+                  </div>
+                  <div style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 11,
+                    color: "#c5c3bc"
+                  }}>
+                    Cloned {new Date(repo.cloned_at).toLocaleDateString()}
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleRemoveCloned(repo.repo_name)}
+                  style={{
+                    padding: "8px 16px",
+                    background: "#c0392b",
+                    color: "#fff",
+                    borderRadius: 8,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    border: "none",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#a93226";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "#c0392b";
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       )}
     </div>
   );
@@ -2426,23 +2426,61 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
 
-  const handleRun = useCallback(() => {
+  const handleRun = useCallback(async () => {
+    // Validate inputs
+    if (!formData.repoUrl || !formData.teamName || !formData.leaderName) {
+      alert('Please fill in all fields before running the agent');
+      return;
+    }
+
     setIsLoading(true);
     setLoadingStep(0);
-    let step = 0;
-    const interval = setInterval(() => {
-      step++;
-      setLoadingStep(step);
-      if (step >= 4) {
-        clearInterval(interval);
-        setTimeout(() => {
-          setIsLoading(false);
-          setHasResults(true);
-          setActivePage("results");
-        }, 400);
-      }
-    }, 900);
-  }, []);
+
+    try {
+      // Simulate loading steps
+      const steps = ["Cloning Repo", "Detecting Failures", "Applying Fixes", "Running CI/CD"];
+      let stepInterval = setInterval(() => {
+        setLoadingStep(prev => {
+          if (prev < steps.length - 1) return prev + 1;
+          return prev;
+        });
+      }, 1000);
+
+      // Call the actual backend API
+      const api = (await import('./services/api.js')).default;
+      const result = await api.runPipeline(
+        formData.repoUrl,
+        formData.teamName,
+        formData.leaderName
+      );
+
+      clearInterval(stepInterval);
+      setLoadingStep(steps.length);
+
+      // Fetch the actual results
+      const results = await api.getResults(result.run_id);
+
+      // Update mock results with real data
+      Object.assign(mockResults, {
+        repoUrl: results.repo_url,
+        teamName: results.team_name,
+        leaderName: results.leader_name,
+        branchName: results.branch_name,
+        status: results.status,
+        failuresDetected: results.failures_detected,
+        fixesApplied: results.fixes_applied,
+        timeTaken: results.time_taken || '0m 0s'
+      });
+
+      setHasResults(true);
+      setActivePage("results");
+    } catch (error) {
+      console.error('Pipeline failed:', error);
+      alert('Pipeline execution failed: ' + error.message + '\n\nPlease ensure:\n1. Backend server is running\n2. You are logged in\n3. Repository URL is valid');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData]);
 
   const handleTabClick = (tab) => {
     if (
@@ -2457,29 +2495,28 @@ export default function App() {
 
   const handleLogin = async () => {
     try {
-      console.log('Login button clicked');
       const api = (await import('./services/api.js')).default;
-      console.log('Fetching GitHub auth URL...');
-      const { auth_url } = await api.getGithubAuthUrl();
-      console.log('Auth URL received:', auth_url);
+      const { auth_url } = await api.getGitHubAuthUrl();
       window.location.href = auth_url;
     } catch (err) {
       console.error('Login error:', err);
-      alert('Failed to initiate GitHub login: ' + err.message + '\n\nMake sure the backend is running on http://localhost:8001');
+      alert('Failed to initiate GitHub login: ' + err.message);
     }
   };
 
+  // Check for auth token on mount
   // Check for auth token on mount
   useEffect(() => {
     // Check for token in URL parameter first
     const urlParams = new URLSearchParams(window.location.search);
     const tokenFromUrl = urlParams.get('token');
-    
+
     if (tokenFromUrl) {
       localStorage.setItem('access_token', tokenFromUrl);
       // Clean URL
       window.history.replaceState({}, document.title, window.location.pathname);
       setIsLoggedIn(true);
+      setShowLanding(false);
       setActivePage("dashboard");
       // Fetch user profile
       import('./services/api.js').then(({ default: api }) => {
@@ -2493,12 +2530,14 @@ export default function App() {
       });
       return;
     }
-    
+
     // Check for existing token in localStorage
     const token = localStorage.getItem('access_token');
     if (token) {
       setIsLoggedIn(true);
-      setActivePage("dashboard");
+      // DO NOT auto-hide landing page for returning users
+      // setShowLanding(false);
+
       // Fetch user profile
       import('./services/api.js').then(({ default: api }) => {
         api.getUserProfile().then(profile => {
@@ -2506,7 +2545,6 @@ export default function App() {
         }).catch(() => {
           localStorage.removeItem('access_token');
           setIsLoggedIn(false);
-          setActivePage("analyze");
         });
       });
     }
@@ -2549,116 +2587,215 @@ export default function App() {
 
   if (showLanding) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "#000",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+      <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden", background: "#0a0a20" }}>
         <GlobalStyles />
-        {/* Content */}
-        <div
-          className="page-enter"
-          style={{
-            textAlign: "center",
-            zIndex: 1,
-            maxWidth: 700,
-            padding: "0 32px",
-          }}
-        >
-          <div
-            style={{
-              width: 80,
-              height: 80,
-              background: "rgba(255,255,255,0.15)",
-              borderRadius: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 32px",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <PipelineIcon size={40} />
+        {/* ── Aurora Background CSS ── */}
+        <style>{`
+          @keyframes aurora1 {
+            0%,100% { transform: translate(-10%, -10%) rotate(0deg) scale(1.1); }
+            50%     { transform: translate(10%, 10%) rotate(-15deg) scale(1.4); }
+          }
+          @keyframes aurora2 {
+            0%,100% { transform: translate(10%, 10%) rotate(10deg) scale(1.2); }
+            50%     { transform: translate(-15%, -10%) rotate(0deg) scale(1.5); }
+          }
+          @keyframes aurora3 {
+            0%,100% { transform: translate(0, 5%) rotate(-5deg) scale(1.3); }
+            50%     { transform: translate(20%, -15%) rotate(15deg) scale(1.1); }
+          }
+          @keyframes landingIn {
+            from { opacity:0; transform: translateY(24px); }
+            to   { opacity:1; transform: translateY(0); }
+          }
+          .landing-hero { animation: landingIn 0.7s cubic-bezier(.22,1,.36,1) 0.1s both; }
+          .landing-cta:hover {
+            box-shadow: 0 0 32px rgba(99, 102, 241, 0.45) !important;
+            transform: translateY(-2px) !important;
+            background: rgba(255,255,255,0.15) !important;
+          }
+          .landing-login:hover {
+            background: rgba(255,255,255,0.18) !important;
+          }
+        `}</style>
+
+        {/* Deep dark base */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 0,
+          background: "radial-gradient(ellipse at bottom, #111130 0%, #060614 100%)",
+        }} />
+
+        {/* Aurora Blurs */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 1, filter: "blur(120px)", opacity: 0.8 }}>
+          {/* Teal Aurora */}
+          <div style={{
+            position: "absolute", width: "70%", height: "60%",
+            background: "linear-gradient(135deg, rgba(8,145,178,0.7) 0%, transparent 80%)",
+            top: "-10%", left: "-10%",
+            borderRadius: "40% 60% 70% 30%",
+            animation: "aurora1 18s ease-in-out infinite",
+          }} />
+          {/* Deep Purple / Pink Aurora */}
+          <div style={{
+            position: "absolute", width: "80%", height: "70%",
+            background: "linear-gradient(135deg, rgba(147,51,234,0.6) 0%, rgba(192,38,211,0.2) 80%)",
+            bottom: "-20%", right: "-10%",
+            borderRadius: "60% 40% 30% 70%",
+            animation: "aurora2 22s ease-in-out infinite",
+          }} />
+          {/* Bright Indigo Core */}
+          <div style={{
+            position: "absolute", width: "60%", height: "50%",
+            background: "radial-gradient(circle, rgba(79,70,229,0.5) 0%, transparent 70%)",
+            top: "20%", left: "20%",
+            animation: "aurora3 15s ease-in-out infinite",
+          }} />
+        </div>
+
+        {/* ── Navbar ── */}
+        <nav style={{
+          position: "absolute", top: 0, left: 0, right: 0, height: 64, zIndex: 10,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "0 40px",
+        }}>
+          {/* Brand */}
+          <div style={{
+            fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 17,
+            color: "#fff", letterSpacing: "0.02em",
+          }}>
+            RIFT 2026
           </div>
-          <h1
-            style={{
-              fontFamily: "'Bloody Feast', 'Creepster', cursive",
-              fontSize: 80,
-              fontWeight: 400,
-              color: "#fff",
-              lineHeight: 1.2,
-              marginBottom: 16,
-              textShadow: "0 0 20px rgba(255,0,0,0.3), 0 0 40px rgba(255,0,0,0.2)",
-              letterSpacing: "0.05em",
-            }}
-          >
-            Monster
-          </h1>
-          <p
-            style={{
+          {/* Login / Profile */}
+          {isLoggedIn && userProfile ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <img
+                src={userProfile.avatar_url}
+                alt={userProfile.username}
+                style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.2)" }}
+              />
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#fff", fontWeight: 500 }}>
+                {userProfile.username}
+              </span>
+            </div>
+          ) : (
+            <button
+              className="landing-login"
+              onClick={handleLogin}
+              style={{
+                padding: "8px 22px",
+                background: "rgba(255,255,255,0.10)",
+                color: "#fff",
+                border: "1px solid rgba(255,255,255,0.25)",
+                borderRadius: 50,
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: "pointer",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                transition: "background 0.2s ease",
+              }}
+            >
+              Log in
+            </button>
+          )}
+        </nav>
+
+        {/* ── Hero ── */}
+        <div style={{
+          position: "relative", zIndex: 5,
+          minHeight: "100vh",
+          display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          textAlign: "center",
+          padding: "80px 32px 48px",
+        }}>
+          {/* App icon */}
+          <div className="landing-icon" style={{
+            width: 88, height: 88, borderRadius: 22,
+            background: "#fff",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.3)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            marginBottom: 32,
+            flexShrink: 0,
+          }}>
+            {/* Terminal-style pipeline icon in brand gradient */}
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+              <defs>
+                <linearGradient id="iconGrad" x1="0" y1="0" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#4f8ef7" />
+                  <stop offset="1" stopColor="#8b5cf6" />
+                </linearGradient>
+              </defs>
+              <rect width="52" height="52" rx="14" fill="url(#iconGrad)" />
+              <polyline points="14,20 22,26 14,32" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <line x1="26" y1="32" x2="38" y2="32" stroke="white" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+          </div>
+
+          {/* Title */}
+          <div className="landing-hero">
+            <h1 style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: 20,
-              color: "rgba(255,255,255,0.8)",
-              marginBottom: 12,
-            }}
-          >
-            Intelligent CI/CD Pipeline AI Agent
-          </p>
-          <p
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 15,
-              color: "rgba(255,255,255,0.5)",
-              marginBottom: 48,
-            }}
-          >
-            Automatically detect and fix pipeline failures with AI-powered analysis
-          </p>
-          <button
-            onClick={() => setShowLanding(false)}
-            style={{
-              padding: "16px 48px",
-              background: "rgba(255,255,255,0.15)",
-              color: "#fff",
-              borderRadius: 12,
-              fontFamily: "'Playfair Display', serif",
-              fontSize: 18,
+              fontSize: "clamp(52px, 8vw, 80px)",
               fontWeight: 700,
-              border: "1px solid rgba(255,255,255,0.3)",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-              backdropFilter: "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.background = "rgba(255,255,255,0.25)";
-              e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.4)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.background = "rgba(255,255,255,0.15)";
-              e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.3)";
-            }}
-          >
-            Proceed to Dashboard →
-          </button>
-          <div
-            style={{
+              color: "#fff",
+              margin: "0 0 18px",
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+            }}>
+              Monster
+            </h1>
+
+            {/* Subtitle */}
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "clamp(14px, 2vw, 17px)",
+              color: "rgba(255,255,255,0.72)",
+              maxWidth: 540,
+              margin: "0 auto 36px",
+              lineHeight: 1.6,
+            }}>
+              Automatically detect and fix CI/CD pipeline failures with AI-powered analysis. Built for RIFT 2026.
+            </p>
+
+            {/* CTA Button */}
+            <button
+              className="landing-cta"
+              onClick={() => {
+                setShowLanding(false);
+                if (isLoggedIn) setActivePage("dashboard");
+              }}
+              style={{
+                padding: "16px 44px",
+                background: "rgba(255,255,255,0.08)",
+                color: "#fff",
+                borderRadius: 50,
+                border: "1px solid rgba(255,255,255,0.2)",
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.22s ease",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                letterSpacing: "0.02em",
+              }}
+            >
+              {isLoggedIn ? "Go to Dashboard →" : "Get Started →"}
+            </button>
+
+            {/* Team tag */}
+            <p style={{
               marginTop: 48,
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 13,
-              color: "rgba(255,255,255,0.4)",
-            }}
-          >
-            Team Jigyasa
+              color: "rgba(255,255,255,0.38)",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+            }}>
+              Team Jigyasa
+            </p>
           </div>
         </div>
       </div>
@@ -2668,9 +2805,9 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: "#f8f8f6" }}>
       <GlobalStyles />
-      <Navbar 
-        activePage={activePage} 
-        setActivePage={handleTabClick} 
+      <Navbar
+        activePage={activePage}
+        setActivePage={handleTabClick}
         isLoggedIn={isLoggedIn}
         userProfile={userProfile}
         onLogin={handleLogin}

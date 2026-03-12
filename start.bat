@@ -1,6 +1,6 @@
 @echo off
 echo ===================================
-echo PipelineIQ - Full Stack Test Script
+echo PipelineIQ - Full Stack Launcher
 echo ===================================
 
 REM Check backend .env
@@ -8,9 +8,7 @@ echo.
 echo [1/6] Checking Backend Configuration...
 if not exist "backend\.env" (
     echo Error: backend\.env not found
-    echo Creating from .env.example...
-    copy "backend\.env.example" "backend\.env"
-    echo Please edit backend\.env with your API keys
+    echo Please run setup.bat first
     pause
     exit /b 1
 )
@@ -20,7 +18,7 @@ echo.
 echo [2/6] Checking Frontend Configuration...
 if not exist "frontend\.env" (
     echo Creating frontend\.env...
-    echo VITE_API_URL=http://localhost:8000 > "frontend\.env"
+    echo VITE_API_URL=http://localhost:8001 > "frontend\.env"
 )
 
 REM Install backend dependencies
@@ -31,14 +29,14 @@ if not exist "venv" (
     python -m venv venv
 )
 call venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r requirements.txt --quiet
 cd ..
 
 REM Install frontend dependencies
 echo.
 echo [4/6] Installing Frontend Dependencies...
 cd frontend
-call npm install
+call npm install --silent
 cd ..
 
 REM Start backend
@@ -49,7 +47,7 @@ start "Backend Server" cmd /k "venv\Scripts\activate && python main.py"
 cd ..
 
 REM Wait for backend
-timeout /t 5 /nobreak
+timeout /t 5 /nobreak >nul
 
 REM Start frontend
 echo.
@@ -68,9 +66,9 @@ echo Backend:  http://localhost:8001
 echo API Docs: http://localhost:8001/docs
 echo.
 echo Press any key to stop all services...
-pause
+pause >nul
 
 REM Cleanup
-taskkill /FI "WindowTitle eq Backend Server*" /T /F
-taskkill /FI "WindowTitle eq Frontend Server*" /T /F
+taskkill /FI "WindowTitle eq Backend Server*" /T /F 2>nul
+taskkill /FI "WindowTitle eq Frontend Server*" /T /F 2>nul
 echo Services stopped
