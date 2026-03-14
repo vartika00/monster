@@ -59,10 +59,10 @@ const GlobalStyles = () => (
 
 /* ─── MOCK DATA ──────────────────────────────────────────────────────── */
 const mockResults = {
-  repoUrl: "https://github.com/rift-org/hackathon-2025",
-  teamName: "RIFT ORGANISERS",
+  repoUrl: "https://github.com/monster-org/hackathon-2025",
+  teamName: "Team Jigyasa",
   leaderName: "Saiyam Kumar",
-  branchName: "RIFT_ORGANISERS_SAIYAM_AI_Fix",
+  branchName: "TEAM_JIGYASA_SAIYAM_AI_Fix",
   status: "PASSED",
   failuresDetected: 11,
   fixesApplied: 10,
@@ -88,7 +88,7 @@ const mockResults = {
 };
 
 const leaderboard = [
-  { team: "RIFT ORGANISERS", score: 100, rank: 3, you: true },
+  { team: "Team Jigyasa", score: 100, rank: 3, you: true },
   { team: "CodeStorm Alpha", score: 100, rank: 1 },
 ];
 
@@ -235,9 +235,9 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
         padding: "0 32px",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        background: "rgba(255,255,255,0.88)",
-        borderBottom: "1px solid #e8e7e3",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        background: "rgba(3,7,18,0.85)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "0 4px 30px rgba(0,0,0,0.3)",
       }}
     >
       {/* Logo */}
@@ -246,11 +246,12 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
           style={{
             width: 36,
             height: 36,
-            background: "#2a2926",
+            background: "linear-gradient(135deg, #1e40af, #3b82f6)",
             borderRadius: 8,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            boxShadow: "0 0 20px rgba(59,130,246,0.3)",
           }}
         >
           <PipelineIcon size={20} />
@@ -258,11 +259,12 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
         <div>
           <div
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 18,
               fontWeight: 700,
-              color: "#111110",
+              color: "#f1f5f9",
               lineHeight: 1.1,
+              letterSpacing: "-0.02em",
             }}
           >
             Monster
@@ -271,7 +273,7 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
             style={{
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 11,
-              color: "#6b6860",
+              color: "#64748b",
               fontWeight: 300,
             }}
           >
@@ -285,7 +287,8 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
         style={{
           display: "flex",
           gap: 6,
-          background: "#f2f1ee",
+          background: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.06)",
           borderRadius: 20,
           padding: "4px",
         }}
@@ -300,8 +303,8 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 14,
               fontWeight: activePage === tab ? 600 : 400,
-              background: activePage === tab ? "#2a2926" : "transparent",
-              color: activePage === tab ? "#fff" : "#6b6860",
+              background: activePage === tab ? "linear-gradient(135deg, #1e40af, #3b82f6)" : "transparent",
+              color: activePage === tab ? "#fff" : "#94a3b8",
               transition: "all 0.2s ease",
               border: "none",
             }}
@@ -317,17 +320,18 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
             style={{
               width: 8,
               height: 8,
-              background: "#14784a",
+              background: "#22c55e",
               borderRadius: "50%",
               animation: "dotPulse 2s ease infinite",
               display: "inline-block",
+              boxShadow: "0 0 8px rgba(34,197,94,0.5)",
             }}
           />
           <span
             style={{
               fontFamily: "'DM Mono', monospace",
               fontSize: 12,
-              color: "#2a2926",
+              color: "#94a3b8",
               fontWeight: 500,
             }}
           >
@@ -343,14 +347,14 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
                 width: 32,
                 height: 32,
                 borderRadius: "50%",
-                border: "2px solid #e8e7e3",
+                border: "2px solid rgba(59,130,246,0.3)",
               }}
             />
             <span
               style={{
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 14,
-                color: "#2a2926",
+                color: "#f1f5f9",
                 fontWeight: 500,
               }}
             >
@@ -362,7 +366,7 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
             onClick={onLogin}
             style={{
               padding: "8px 20px",
-              background: "#2a2926",
+              background: "linear-gradient(135deg, #1e40af, #3b82f6)",
               color: "#fff",
               borderRadius: 8,
               fontFamily: "'DM Sans', sans-serif",
@@ -370,16 +374,15 @@ const Navbar = ({ activePage, setActivePage, isLoggedIn, userProfile, onLogin })
               fontWeight: 500,
               transition: "all 0.2s ease",
               border: "none",
+              boxShadow: "0 0 20px rgba(59,130,246,0.2)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#111110";
+              e.currentTarget.style.boxShadow = "0 0 30px rgba(59,130,246,0.4)";
               e.currentTarget.style.transform = "translateY(-1px)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "#2a2926";
+              e.currentTarget.style.boxShadow = "0 0 20px rgba(59,130,246,0.2)";
               e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "none";
             }}
           >
             Login with GitHub
@@ -405,11 +408,12 @@ const EmptyState = ({ onGoAnalyze }) => (
     <LockIcon />
     <div
       style={{
-        fontFamily: "'Playfair Display', serif",
+        fontFamily: "'Space Grotesk', sans-serif",
         fontSize: 22,
-        fontStyle: "italic",
-        color: "#6b6860",
+        fontWeight: 600,
+        color: "#94a3b8",
         textAlign: "center",
+        letterSpacing: "-0.02em",
       }}
     >
       Run the agent first to see results
@@ -418,7 +422,7 @@ const EmptyState = ({ onGoAnalyze }) => (
       style={{
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 14,
-        color: "#c5c3bc",
+        color: "#475569",
       }}
     >
       Head to the Analyze tab to get started
@@ -428,12 +432,13 @@ const EmptyState = ({ onGoAnalyze }) => (
       style={{
         marginTop: 8,
         padding: "10px 28px",
-        background: "#2a2926",
+        background: "linear-gradient(135deg, #1e40af, #3b82f6)",
         color: "#fff",
         borderRadius: 10,
         fontFamily: "'DM Sans', sans-serif",
         fontSize: 14,
         fontWeight: 500,
+        boxShadow: "0 0 20px rgba(59,130,246,0.2)",
       }}
     >
       Go to Analyze →
@@ -461,12 +466,12 @@ const AnalyzePage = ({
     width: "100%",
     height: 52,
     padding: "0 16px",
-    background: "#f2f1ee",
-    border: `1.5px solid ${focused === name ? "#2a2926" : "#e8e7e3"}`,
+    background: "rgba(255,255,255,0.04)",
+    border: `1.5px solid ${focused === name ? "#3b82f6" : "rgba(255,255,255,0.08)"}`,
     borderRadius: 10,
     fontFamily: "'DM Sans', sans-serif",
     fontSize: 15,
-    color: "#111110",
+    color: "#f1f5f9",
     transition: "border-color 0.2s ease",
   });
   const [hoverBtn, setHoverBtn] = useState("");
@@ -604,12 +609,13 @@ const AnalyzePage = ({
         <div style={{ flex: 1, paddingTop: 12 }}>
           <h1
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 40,
               fontWeight: 700,
-              color: "#111110",
+              color: "#f1f5f9",
               lineHeight: 1.2,
               marginBottom: 10,
+              letterSpacing: "-0.02em",
             }}
           >
             Create a Run
@@ -642,7 +648,7 @@ const AnalyzePage = ({
               {
                 key: "teamName",
                 label: "Team Name",
-                placeholder: "e.g. RIFT ORGANISERS",
+                placeholder: "e.g. Team Jigyasa",
               },
               {
                 key: "leaderName",
@@ -1373,23 +1379,24 @@ const DashboardPage = ({ userProfile }) => {
               width: 60,
               height: 60,
               borderRadius: "50%",
-              border: "3px solid #e8e7e3"
+              border: "3px solid rgba(59,130,246,0.3)"
             }}
           />
           <div>
             <h1 style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 32,
               fontWeight: 700,
-              color: "#111110",
-              marginBottom: 4
+              color: "#f1f5f9",
+              marginBottom: 4,
+              letterSpacing: "-0.02em"
             }}>
               Welcome, {userProfile.name}
             </h1>
             <div style={{
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 14,
-              color: "#6b6860"
+              color: "#94a3b8"
             }}>
               @{userProfile.username} • {userProfile.public_repos + userProfile.private_repos} repositories
             </div>
@@ -1398,27 +1405,29 @@ const DashboardPage = ({ userProfile }) => {
         <div style={{ display: "flex", gap: 12 }}>
           <div style={{
             padding: "12px 20px",
-            background: "#e8f5ef",
+            background: "rgba(59,130,246,0.1)",
+            border: "1px solid rgba(59,130,246,0.2)",
             borderRadius: 12,
             textAlign: "center"
           }}>
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 700, color: "#14784a" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 700, color: "#3b82f6" }}>
               {clonedRepos.length}
             </div>
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#6b6860" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#94a3b8" }}>
               Cloned
             </div>
           </div>
           <div style={{
             padding: "12px 20px",
-            background: "#f2f1ee",
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: 12,
             textAlign: "center"
           }}>
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 700, color: "#2a2926" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 20, fontWeight: 700, color: "#f1f5f9" }}>
               {repos.length}
             </div>
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#6b6860" }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "#94a3b8" }}>
               Total Repos
             </div>
           </div>
@@ -1443,15 +1452,15 @@ const DashboardPage = ({ userProfile }) => {
             minWidth: 300,
             height: 48,
             padding: "0 16px",
-            background: "#fff",
-            border: "1.5px solid #e8e7e3",
+            background: "rgba(255,255,255,0.04)",
+            border: "1.5px solid rgba(255,255,255,0.08)",
             borderRadius: 10,
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 14,
-            color: "#111110"
+            color: "#f1f5f9"
           }}
         />
-        <div style={{ display: "flex", gap: 6, background: "#f2f1ee", borderRadius: 10, padding: "4px" }}>
+        <div style={{ display: "flex", gap: 6, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "4px" }}>
           {[
             { key: "all", label: "All" },
             { key: "public", label: "Public" },
@@ -1466,8 +1475,8 @@ const DashboardPage = ({ userProfile }) => {
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 14,
                 fontWeight: filterType === key ? 600 : 400,
-                background: filterType === key ? "#2a2926" : "transparent",
-                color: filterType === key ? "#fff" : "#6b6860",
+                background: filterType === key ? "linear-gradient(135deg, #1e40af, #3b82f6)" : "transparent",
+                color: filterType === key ? "#fff" : "#94a3b8",
                 border: "none",
                 transition: "all 0.2s ease"
               }}
@@ -1481,7 +1490,7 @@ const DashboardPage = ({ userProfile }) => {
       {/* Repository Grid */}
       {loading ? (
         <div style={{ padding: 60, textAlign: "center" }}>
-          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, color: "#6b6860" }}>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, color: "#94a3b8" }}>
             Loading repositories...
           </div>
         </div>
@@ -1495,12 +1504,12 @@ const DashboardPage = ({ userProfile }) => {
             const cloned = isCloned(repo.name);
             return (
               <div key={repo.id} style={{
-                background: "#fff",
+                background: "rgba(255,255,255,0.03)",
                 borderRadius: 16,
                 padding: 24,
-                boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-                border: cloned ? "2px solid #14784a" : "1px solid #e8e7e3",
-                transition: "all 0.2s ease"
+                border: cloned ? "1px solid rgba(59,130,246,0.3)" : "1px solid rgba(255,255,255,0.06)",
+                transition: "all 0.3s ease",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
               }}>
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
                   <div style={{ flex: 1 }}>
@@ -1529,8 +1538,8 @@ const DashboardPage = ({ userProfile }) => {
                       )}
                       {cloned && (
                         <span style={{
-                          background: "#e8f5ef",
-                          color: "#14784a",
+                          background: "rgba(59,130,246,0.1)",
+                          color: "#60a5fa",
                           padding: "2px 8px",
                           borderRadius: 12,
                           fontSize: 10,
@@ -1558,8 +1567,8 @@ const DashboardPage = ({ userProfile }) => {
                     </p>
                     <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                       <span style={{
-                        background: "#f2f1ee",
-                        color: "#2a2926",
+                        background: "rgba(255,255,255,0.06)",
+                        color: "#e2e8f0",
                         padding: "4px 8px",
                         borderRadius: 8,
                         fontSize: 11,
@@ -1571,7 +1580,7 @@ const DashboardPage = ({ userProfile }) => {
                       <span style={{
                         fontFamily: "'DM Mono', monospace",
                         fontSize: 11,
-                        color: "#c5c3bc"
+                        color: "#64748b"
                       }}>
                         Updated {new Date(repo.updated_at).toLocaleDateString()}
                       </span>
@@ -2904,7 +2913,7 @@ const LandingPage = ({ isLoggedIn, userProfile, handleLogin, onEnter }) => {
             <div style={{ width:16,height:16,borderRadius:8,background:"linear-gradient(135deg,#fb923c,#ea580c)" }} />
             <span style={{ fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,color:"#fff",letterSpacing:"-0.02em" }}>MONSTER</span>
           </div>
-          <div style={{ fontSize:10,textTransform:"uppercase",color:"#4B5563",letterSpacing:"0.2em",fontFamily:"monospace" }}>Team Jigyasa • RIFT 2026</div>
+          <div style={{ fontSize:10,textTransform:"uppercase",color:"#4B5563",letterSpacing:"0.2em",fontFamily:"monospace" }}>Team Jigyasa • 2026</div>
           <div style={{ display:"flex",gap:24,color:"#6B7280" }}>
             <span style={{ fontSize:12,fontFamily:"monospace" }}>Built with AI</span>
           </div>

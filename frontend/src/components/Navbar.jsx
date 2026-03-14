@@ -43,9 +43,9 @@ const Navbar = ({ activePage, setActivePage }) => {
         padding: "0 32px",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        background: "rgba(255,255,255,0.88)",
-        borderBottom: "1px solid #e8e7e3",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        background: "rgba(3,7,18,0.85)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "0 4px 30px rgba(0,0,0,0.3)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -53,11 +53,12 @@ const Navbar = ({ activePage, setActivePage }) => {
           style={{
             width: 36,
             height: 36,
-            background: "#2a2926",
+            background: "linear-gradient(135deg, #1e40af, #3b82f6)",
             borderRadius: 8,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            boxShadow: "0 0 20px rgba(59,130,246,0.3)",
           }}
         >
           <PipelineIcon size={20} />
@@ -65,11 +66,12 @@ const Navbar = ({ activePage, setActivePage }) => {
         <div>
           <div
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 18,
               fontWeight: 700,
-              color: "#111110",
+              color: "#f1f5f9",
               lineHeight: 1.1,
+              letterSpacing: "-0.02em",
             }}
           >
             PipelineIQ
@@ -78,11 +80,11 @@ const Navbar = ({ activePage, setActivePage }) => {
             style={{
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 11,
-              color: "#6b6860",
+              color: "#64748b",
               fontWeight: 300,
             }}
           >
-            by RIFT ORGANISERS
+            by Team Jigyasa
           </div>
         </div>
       </div>
@@ -91,8 +93,9 @@ const Navbar = ({ activePage, setActivePage }) => {
         className="nav-tabs"
         style={{
           display: "flex",
-          gap: 6,
-          background: "#f2f1ee",
+          gap: 4,
+          background: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.06)",
           borderRadius: 20,
           padding: "4px",
         }}
@@ -107,8 +110,8 @@ const Navbar = ({ activePage, setActivePage }) => {
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 14,
               fontWeight: activePage === tab ? 600 : 400,
-              background: activePage === tab ? "#2a2926" : "transparent",
-              color: activePage === tab ? "#fff" : "#6b6860",
+              background: activePage === tab ? "linear-gradient(135deg, #1e40af, #3b82f6)" : "transparent",
+              color: activePage === tab ? "#fff" : "#94a3b8",
               transition: "all 0.2s ease",
               border: "none",
             }}
@@ -124,17 +127,18 @@ const Navbar = ({ activePage, setActivePage }) => {
             style={{
               width: 8,
               height: 8,
-              background: "#14784a",
+              background: "#22c55e",
               borderRadius: "50%",
               animation: "dotPulse 2s ease infinite",
               display: "inline-block",
+              boxShadow: "0 0 8px rgba(34,197,94,0.5)",
             }}
           />
           <span
             style={{
               fontFamily: "'DM Mono', monospace",
               fontSize: 12,
-              color: "#2a2926",
+              color: "#94a3b8",
               fontWeight: 500,
             }}
           >
@@ -145,7 +149,7 @@ const Navbar = ({ activePage, setActivePage }) => {
           onClick={() => alert('Login functionality coming soon!')}
           style={{
             padding: "8px 20px",
-            background: "#2a2926",
+            background: "linear-gradient(135deg, #1e40af, #3b82f6)",
             color: "#fff",
             borderRadius: 8,
             fontFamily: "'DM Sans', sans-serif",
@@ -153,16 +157,15 @@ const Navbar = ({ activePage, setActivePage }) => {
             fontWeight: 500,
             transition: "all 0.2s ease",
             border: "none",
+            boxShadow: "0 0 20px rgba(59,130,246,0.2)",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#111110";
+            e.currentTarget.style.boxShadow = "0 0 30px rgba(59,130,246,0.4)";
             e.currentTarget.style.transform = "translateY(-1px)";
-            e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "#2a2926";
+            e.currentTarget.style.boxShadow = "0 0 20px rgba(59,130,246,0.2)";
             e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "none";
           }}
         >
           Login

@@ -1,12 +1,12 @@
 # PipelineIQ - Monster CI/CD AI Agent
 
-**Team Jigyasa - RIFT 2026**
+**Team Jigyasa - 2026**
 
 ## 🔗 Links
 
 - **Live Dashboard**: [DEPLOYMENT_URL_HERE]
 - **LinkedIn Demo Video**: [VIDEO_URL_HERE]
-- **GitHub Repository**: https://github.com/YOUR_USERNAME/RIFT-2026
+- **GitHub Repository**: https://github.com/vartika00/monster
 
 ## 📋 Overview
 
@@ -115,8 +115,8 @@ Autonomous DevOps Agent that detects, fixes, and verifies CI/CD pipeline failure
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/YOUR_USERNAME/RIFT-2026
-cd "RIFT 2026"
+git clone https://github.com/vartika00/monster
+cd "2026"
 
 # 2. Run setup
 setup.bat
@@ -145,7 +145,7 @@ start.bat
 
 1. Open http://localhost:5173
 2. Enter GitHub repository URL
-3. Enter team name (e.g., "RIFT ORGANISERS")
+3. Enter team name (e.g., "Team Jigyasa")
 4. Enter team leader name (e.g., "Saiyam Kumar")
 5. Click "Run Agent"
 6. View real-time progress and results
@@ -190,7 +190,7 @@ Trigger agent execution
 ```json
 {
   "repo_url": "https://github.com/user/repo",
-  "team_name": "RIFT ORGANISERS",
+  "team_name": "Team Jigyasa",
   "leader_name": "Saiyam Kumar",
   "retry_limit": 5
 }
@@ -199,7 +199,7 @@ Trigger agent execution
 **Response:**
 ```json
 {
-  "run_id": "RIFT_ORGANISERS_20240219_143022",
+  "run_id": "TEAM_JIGYASA_20240219_143022",
   "status": "running",
   "message": "Pipeline execution started"
 }
@@ -212,9 +212,9 @@ Get execution results
 ```json
 {
   "repoUrl": "https://github.com/user/repo",
-  "teamName": "RIFT ORGANISERS",
+  "teamName": "Team Jigyasa",
   "leaderName": "Saiyam Kumar",
-  "branchName": "RIFT_ORGANISERS_SAIYAM_KUMAR_AI_Fix",
+  "branchName": "TEAM_JIGYASA_SAIYAM_KUMAR_AI_Fix",
   "status": "PASSED",
   "failuresDetected": 11,
   "fixesApplied": 10,
@@ -249,7 +249,7 @@ Get execution results
 
 MIT License - Team Jigyasa
 
-## 🎯 RIFT 2026 Compliance
+## 🎯 2026 Compliance
 
 ✅ Multi-agent architecture (LangGraph)
 ✅ React dashboard with all required sections
@@ -264,7 +264,7 @@ MIT License - Team Jigyasa
 
 ---
 
-**Built for RIFT 2026 Hackathon**
+**Built for 2026 Hackathon**
 
 ## 🚀 Quick Start
 
@@ -499,7 +499,7 @@ npm run build
 ## 📝 Project Structure
 
 ```
-RIFT 2026/
+2026/
 ├── backend/
 │   ├── agents/
 │   │   └── pipeline_agent.py    # Multi-agent system
@@ -538,7 +538,7 @@ MIT License - Team Jigyasa
 
 ## 👥 Team
 
-Team Jigyasa - RIFT 2026
+Team Jigyasa - 2026
 
 ## 🆘 Support
 
