@@ -1,0 +1,145 @@
+/* iPhone 17 Pro Max and Modern Mobile Devices Fix */
+
+/* Reset and base mobile styles */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  width: 100%;
+  overflow-x: hidden !important;
+  position: relative;
+}
+
+/* Force responsive behavior */
+#root {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* iPhone 17 Pro Max specific (430px width) */
+@media only screen and (max-width: 430px) {
+  body, html {
+    max-width: 100vw;
+    overflow-x: hidden !important;
+  }
+  
+  * {
+    max-width: 100%;
+  }
+  
+  .page-enter {
+    padding: 70px 12px 24px !important;
+    max-width: 100vw;
+  }
+  
+  .analyze-grid {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+  
+  .deco-panel {
+    display: none !important;
+  }
+  
+  h1 {
+    font-size: 24px !important;
+    line-height: 1.2 !important;
+  }
+  
+  h2 {
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+  }
+  
+  input, textarea, select {
+    font-size: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  button {
+    width: 100% !important;
+    min-height: 48px !important;
+  }
+  
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  
+  .nav-tabs {
+    display: none !important;
+  }
+  
+  nav {
+    padding: 0 12px !important;
+    height: 56px !important;
+  }
+}
+
+/* All mobile devices */
+@media only screen and (max-width: 768px) {
+  body {
+    overflow-x: hidden !important;
+  }
+  
+  .container-responsive,
+  .page-enter,
+  main,
+  section {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+  
+  img, video, iframe {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  
+  .analyze-grid,
+  .score-grid,
+  .metrics-row {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  
+  .summary-card,
+  .score-breakdown,
+  .timeline-container {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .fixes-table-container {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  table {
+    min-width: 100% !important;
+  }
+}
+
+/* Landscape orientation fix */
+@media only screen and (max-height: 500px) and (orientation: landscape) {
+  nav {
+    height: 48px !important;
+  }
+  
+  .page-enter {
+    padding-top: 56px !important;
+  }
+}
