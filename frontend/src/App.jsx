@@ -2951,7 +2951,7 @@ const LandingPage = ({ isLoggedIn, userProfile, handleLogin, onEnter }) => {
             <div style={{ width:16,height:16,borderRadius:8,background:"linear-gradient(135deg,#fb923c,#ea580c)" }} />
             <span style={{ fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,color:"#fff",letterSpacing:"-0.02em" }}>MONSTER</span>
           </div>
-          <div style={{ fontSize:10,textTransform:"uppercase",color:"#4B5563",letterSpacing:"0.2em",fontFamily:"monospace" }}>Team Jigyasa • 2026</div>
+          <div style={{ fontSize:10,textTransform:"uppercase",color:"#4B5563",letterSpacing:"0.2em",fontFamily:"monospace" }}>Team Jigyasa</div>
           <div style={{ display:"flex",gap:24,color:"#6B7280" }}>
             <span style={{ fontSize:12,fontFamily:"monospace" }}>Built with AI</span>
           </div>
