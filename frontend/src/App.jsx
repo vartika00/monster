@@ -53,6 +53,44 @@ const GlobalStyles = () => (
       .timeline-card { min-width: 260px !important; }
       .nav-tabs { gap: 4px !important; }
       .nav-tab span { display: none; }
+      
+      /* Page containers */
+      .page-enter { padding: 80px 16px 32px !important; }
+      
+      /* Cards and sections */
+      .summary-card { padding: 24px !important; margin-bottom: 24px !important; }
+      .fixes-table-container { overflow-x: auto !important; }
+      .score-breakdown { padding: 24px !important; }
+      .timeline-container { padding: 24px 16px !important; }
+      
+      /* Typography */
+      h1 { font-size: 28px !important; }
+      h2 { font-size: 24px !important; }
+      h3 { font-size: 20px !important; }
+      
+      /* Buttons */
+      button { min-height: 44px !important; }
+      
+      /* Tables */
+      table { font-size: 12px !important; }
+      th, td { padding: 8px 12px !important; }
+    }
+    
+    @media (max-width: 480px) {
+      /* Extra small mobile */
+      .page-enter { padding: 72px 12px 24px !important; }
+      .summary-card { padding: 16px !important; }
+      .score-breakdown { padding: 16px !important; }
+      
+      h1 { font-size: 24px !important; }
+      h2 { font-size: 20px !important; }
+      h3 { font-size: 18px !important; }
+      
+      table { font-size: 11px !important; }
+      th, td { padding: 6px 8px !important; }
+      
+      /* Hide less important columns on very small screens */
+      .hide-on-mobile { display: none !important; }
     }
   `}</style>
 );

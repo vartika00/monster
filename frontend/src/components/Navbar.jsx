@@ -30,6 +30,7 @@ const Navbar = ({ activePage, setActivePage }) => {
 
   return (
     <nav
+      className="navbar-responsive"
       style={{
         position: "fixed",
         top: 0,
@@ -48,8 +49,45 @@ const Navbar = ({ activePage, setActivePage }) => {
         boxShadow: "0 4px 30px rgba(0,0,0,0.3)",
       }}
     >
+      <style>{`
+        @media (max-width: 768px) {
+          .navbar-responsive {
+            padding: 0 16px !important;
+            height: 56px !important;
+          }
+          .nav-tabs {
+            display: none !important;
+          }
+          .nav-logo-text {
+            font-size: 16px !important;
+          }
+          .nav-logo-icon {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          .nav-actions {
+            gap: 8px !important;
+          }
+          .nav-status-text {
+            display: none !important;
+          }
+          .nav-login-btn {
+            padding: 6px 12px !important;
+            font-size: 12px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .navbar-responsive {
+            padding: 0 12px !important;
+          }
+          .nav-subtitle {
+            display: none !important;
+          }
+        }
+      `}</style>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div
+          className="nav-logo-icon"
           style={{
             width: 36,
             height: 36,
@@ -65,6 +103,7 @@ const Navbar = ({ activePage, setActivePage }) => {
         </div>
         <div>
           <div
+            className="nav-logo-text"
             style={{
               fontFamily: "'Space Grotesk', sans-serif",
               fontSize: 18,
@@ -77,6 +116,7 @@ const Navbar = ({ activePage, setActivePage }) => {
             PipelineIQ
           </div>
           <div
+            className="nav-subtitle"
             style={{
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 11,
@@ -121,7 +161,10 @@ const Navbar = ({ activePage, setActivePage }) => {
         ))}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+      <div
+        className="nav-actions"
+        style={{ display: "flex", alignItems: "center", gap: 16 }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span
             style={{
@@ -135,6 +178,7 @@ const Navbar = ({ activePage, setActivePage }) => {
             }}
           />
           <span
+            className="nav-status-text"
             style={{
               fontFamily: "'DM Mono', monospace",
               fontSize: 12,
@@ -146,6 +190,7 @@ const Navbar = ({ activePage, setActivePage }) => {
           </span>
         </div>
         <button
+          className="nav-login-btn"
           onClick={() => alert('Login functionality coming soon!')}
           style={{
             padding: "8px 20px",
