@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./index.css";
+import ConfettiBackground from "./components/ConfettiBackground";
 
 /* ─── GLOBAL STYLES ─────────────────────────────────────────────────── */
 const GlobalStyles = () => (
@@ -2411,6 +2412,508 @@ function ProfilePage({ userProfile }) {
   );
 }
 
+/* ─── LATICCE-STYLE LANDING PAGE ─────────────────────────────────────── */
+const LandingPage = ({ isLoggedIn, userProfile, handleLogin, onEnter }) => {
+  const canvasRef = useRef(null);
+  const mouseRef = useRef({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: -200, y: -200 });
+  const [loaderVisible, setLoaderVisible] = useState(true);
+  const [loaderOpacity, setLoaderOpacity] = useState(1);
+
+  // Loader
+  useEffect(() => {
+    const t1 = setTimeout(() => setLoaderOpacity(0), 1500);
+    const t2 = setTimeout(() => setLoaderVisible(false), 3000);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
+  // Particle Engine
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+    const particles = [];
+    const mouse = mouseRef.current;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 2;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.color = Math.random() > 0.8 ? "rgba(59,130,246," : "rgba(147,197,253,";
+        this.alpha = Math.random() * 0.5 + 0.1;
+      }
+      update() {
+        const dx = mouse.x - this.x, dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) { this.speedX -= dx * 0.0005; this.speedY -= dy * 0.0005; }
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.x < 0) this.x = width; if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height; if (this.y > height) this.y = 0;
+      }
+      draw() {
+        ctx.fillStyle = this.color + this.alpha + ")";
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+    let animId;
+    function animate() {
+      ctx.clearRect(0, 0, width, height); ctx.lineWidth = 0.5;
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 100) {
+            ctx.beginPath(); ctx.strokeStyle = `rgba(50,50,60,${0.1 - distance / 1000})`;
+            ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+          }
+        }
+      }
+      particles.forEach((p) => { p.update(); p.draw(); });
+      animId = requestAnimationFrame(animate);
+    }
+    animate();
+    const onResize = () => { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; };
+    window.addEventListener("resize", onResize);
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", onResize); };
+  }, []);
+
+  // Mouse glow tracker
+  useEffect(() => {
+    // Only enable cursor glow on desktop (1024px+)
+    const isDesktop = window.innerWidth >= 1024;
+    if (!isDesktop) return;
+    
+    const cursorGlow = document.getElementById('lp-cursor-glow');
+    const landingContainer = document.querySelector('.lp-landing-container');
+    
+    const onMove = (e) => {
+      mouseRef.current.x = e.clientX;
+      mouseRef.current.y = e.clientY;
+      setMousePos({ x: e.clientX, y: e.clientY });
+      
+      if (cursorGlow) {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+      }
+    };
+    
+    window.addEventListener("mousemove", onMove);
+    
+    // Cursor interactions
+    const clickables = document.querySelectorAll('a, button, input, textarea, .group, .cursor-pointer, .lp-hover-float');
+    clickables.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (landingContainer) {
+          landingContainer.classList.add('lp-cursor-hover');
+        }
+      });
+      el.addEventListener('mouseleave', () => {
+        if (landingContainer) {
+          landingContainer.classList.remove('lp-cursor-hover');
+        }
+      });
+    });
+    
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+    };
+  }, []);
+
+  // Scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = "1"; entry.target.style.transform = "translateY(0)";
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".lp-reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [loaderVisible]);
+
+
+
+  const accent = "#F97316";
+
+  return (
+    <div className="lp-landing-container" style={{ minHeight: "100vh", background: "#030712", color: "#fff", overflowX: "hidden", fontFamily: "'Inter', sans-serif", WebkitFontSmoothing: "antialiased" }}>
+      {/* Cursor Glow */}
+      <div id="lp-cursor-glow" />
+      {/* ── Fonts ── */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      
+      {/* ── Unicorn Studio Background ── */}
+      <div className="aura-background-component" style={{ 
+        position: 'fixed', 
+        top: 0, 
+        width: '100%', 
+        height: '100vh', 
+        zIndex: -10, 
+        filter: 'blur(2px)', 
+        opacity: 0.4,
+        maskImage: 'linear-gradient(to bottom, transparent, black 0%, black 89%, transparent)',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 0%, black 89%, transparent)'
+      }}>
+        <div data-us-project="qF3qXhdiOxdUeQYH8wCK" style={{ position: 'absolute', top: 0, left: 0, zIndex: -10, width: '100%', height: '100%' }}></div>
+      </div>
+      {/* ── Landing Styles ── */}
+      <style>{`
+        .lp-reveal { opacity:0; transform:translateY(30px); transition: opacity 0.8s ease-out,transform 0.8s ease-out; }
+        @keyframes lp-grow { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+        @keyframes lp-fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes lp-slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes lp-float { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-8px) scale(1.01);} }
+        .lp-hover-float:hover { animation: lp-float 3s ease-in-out infinite; }
+        
+        /* Custom Cursor Glow - Desktop Only */
+        @media (min-width: 1024px) {
+          #lp-cursor-glow {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            z-index: 9999;
+            background: radial-gradient(circle, rgba(249,115,22,0.6) 0%, rgba(249,115,22,0.3) 40%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(12px);
+            transform: translate(-50%, -50%);
+            transition: all 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+          }
+          
+          /* Hover state */
+          .lp-cursor-hover #lp-cursor-glow {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(249,115,22,0.8) 0%, rgba(249,115,22,0.5) 40%, transparent 70%);
+            filter: blur(16px);
+          }
+        }
+        
+        /* Mobile: Hide glow */
+        @media (max-width: 1023px) {
+          #lp-cursor-glow { display: none !important; }
+        }
+        @keyframes lp-orb1 {
+          0%   { transform: translate(0, 0) scale(1); }
+          25%  { transform: translate(80px, -120px) scale(1.1); }
+          50%  { transform: translate(-60px, -60px) scale(0.95); }
+          75%  { transform: translate(40px, 40px) scale(1.05); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes lp-orb2 {
+          0%   { transform: translate(0, 0) scale(1); }
+          25%  { transform: translate(-100px, 80px) scale(1.15); }
+          50%  { transform: translate(70px, 30px) scale(0.9); }
+          75%  { transform: translate(-30px, -90px) scale(1.08); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes lp-orb3 {
+          0%   { transform: translate(0, 0) scale(1); }
+          33%  { transform: translate(60px, 100px) scale(1.12); }
+          66%  { transform: translate(-90px, -40px) scale(0.92); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        ::selection { background:#3b82f6;color:white; }
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:#030712; }
+        ::-webkit-scrollbar-thumb { background:#3b82f6;border-radius:2px; }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+          .lp-hero-title { font-size: clamp(36px, 12vw, 72px) !important; }
+          .lp-nav { padding: 16px 24px !important; flex-wrap: wrap !important; gap: 12px !important; }
+          .lp-nav-links { display: none !important; }
+          .lp-nav-logo { font-size: 16px !important; }
+          .lp-nav-status { padding: 8px 12px !important; font-size: 9px !important; }
+          .lp-section { padding: 64px 16px !important; }
+          .lp-grid-2 { grid-template-columns: 1fr !important; gap: 32px !important; }
+          .lp-grid-3 { grid-template-columns: 1fr !important; }
+          .lp-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+          .lp-about-grid { grid-template-columns: 1fr !important; }
+          .lp-terminal { height: 400px !important; }
+          .lp-hero-cta { padding: 12px 32px !important; font-size: 14px !important; }
+          .lp-process-card { padding: 24px !important; }
+          .lp-feature-card { padding: 24px !important; }
+        }
+        @media (max-width: 480px) {
+          .lp-grid-4 { grid-template-columns: 1fr !important; }
+          .lp-hero-subtitle { font-size: 11px !important; flex-direction: column !important; gap: 12px !important; padding: 12px !important; }
+          .lp-nav { padding: 12px 16px !important; }
+          .lp-hero-title { font-size: clamp(32px, 10vw, 64px) !important; }
+          .lp-section-title { font-size: 28px !important; }
+          .lp-process-card { padding: 20px !important; }
+          .lp-feature-card { padding: 20px !important; }
+        }
+      `}</style>
+
+      {/* Mouse Glow Spotlight */}
+      <div style={{ position:"fixed", top:0, left:0, width:"100%", height:"100%", pointerEvents:"none", zIndex:1, background:`radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px, rgba(59,130,246,0.15), rgba(99,102,241,0.08) 40%, transparent 70%)`, transition:"background 0.1s ease" }} />
+
+      {/* Neural Canvas */}
+      <canvas ref={canvasRef} id="neural-canvas" style={{ position:"fixed", zIndex:-10, opacity:0.3, width:"100%", height:"100%", top:0, left:0 }} />
+
+      {/* Grid Overlay */}
+      <div style={{ position:"fixed", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.05) 1px,transparent 1px)", backgroundSize:"64px 64px", maskImage:"radial-gradient(ellipse 80% 80% at 50% 50%,#000 60%,transparent 100%)", WebkitMaskImage:"radial-gradient(ellipse 80% 80% at 50% 50%,#000 60%,transparent 100%)", zIndex:-5, pointerEvents:"none" }} />
+
+      {/* Loader */}
+      {loaderVisible && (
+        <div style={{ position:"fixed",inset:0,background:"#030712",zIndex:10000,display:"flex",justifyContent:"center",alignItems:"center",transition:"opacity 1.5s cubic-bezier(0.77,0,0.175,1)",opacity:loaderOpacity }}>
+          <div style={{ display:"flex",flexDirection:"column",alignItems:"center" }}>
+            <div style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:36,fontWeight:700,letterSpacing:"-0.05em",marginBottom:16,color:"#fff" }}>MONS<span style={{color:accent}}>.</span>TER</div>
+            <div style={{ fontFamily:"monospace",fontSize:12,color:accent,letterSpacing:"0.3em",textTransform:"uppercase" }}>Loading Neural Model</div>
+            <div style={{ width:192,height:1,background:"#1f2937",marginTop:24,overflow:"hidden",position:"relative" }}>
+              <div style={{ position:"absolute",inset:0,background:accent,width:"100%",transformOrigin:"left",animation:"lp-grow 1.5s ease-in-out" }} />
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
+      {/* ─── NAV ─── */}
+      <nav className="lp-nav" style={{ position:"fixed",top:0,width:"100%",zIndex:50,padding:"24px 48px",display:"flex",justifyContent:"space-between",alignItems:"center",backdropFilter:"blur(4px)",borderBottom:"1px solid rgba(255,255,255,0.05)",flexWrap:"wrap",gap:16 }}>
+        <div style={{ display:"flex",alignItems:"center",gap:12 }}>
+          <div style={{ width:16,height:16,borderRadius:8,background:"linear-gradient(135deg,#fb923c,#ea580c)" }} />
+          <span className="lp-nav-logo" style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:18,fontWeight:700,color:"#fff",letterSpacing:"-0.02em" }}>Monster</span>
+        </div>
+        <div className="lp-nav-links" style={{ display:"flex",gap:32,background:"rgba(17,24,39,0.5)",border:"1px solid rgba(255,255,255,0.05)",borderRadius:9999,padding:"12px 32px",backdropFilter:"blur(12px)",flexWrap:"wrap" }}>
+          <a href="#lp-hero" style={{ color:"#9CA3AF",textDecoration:"none",fontSize:14,fontWeight:500,transition:"color 0.2s" }} onMouseEnter={(e)=>e.target.style.color="#fff"} onMouseLeave={(e)=>e.target.style.color="#9CA3AF"}>Home</a>
+          <a href="#lp-about" style={{ color:"#9CA3AF",textDecoration:"none",fontSize:14,fontWeight:500,transition:"color 0.2s" }} onMouseEnter={(e)=>e.target.style.color="#fff"} onMouseLeave={(e)=>e.target.style.color="#9CA3AF"}>About</a>
+          <a href="#lp-process" style={{ color:"#9CA3AF",textDecoration:"none",fontSize:14,fontWeight:500,transition:"color 0.2s" }} onMouseEnter={(e)=>e.target.style.color="#fff"} onMouseLeave={(e)=>e.target.style.color="#9CA3AF"}>Process</a>
+        </div>
+        <div style={{ display:"flex",alignItems:"center",gap:16 }}>
+          {isLoggedIn && userProfile ? (
+            <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+              <img src={userProfile.avatar_url} alt={userProfile.username} style={{ width:28,height:28,borderRadius:"50%",border:"1px solid rgba(255,255,255,0.2)" }} />
+              <span style={{ fontSize:13,color:"#fff",fontWeight:500 }}>{userProfile.username}</span>
+            </div>
+          ) : (
+            <button onClick={handleLogin} className="lp-nav-status" style={{ padding:"6px 16px",borderRadius:9999,background:"rgba(249,115,22,0.1)",border:"1px solid rgba(249,115,22,0.2)",color:accent,fontSize:10,fontWeight:500,fontFamily:"monospace",letterSpacing:"0.1em",cursor:"pointer",display:"flex",alignItems:"center",gap:8 }}>
+              <span style={{ position:"relative",display:"flex",width:8,height:8 }}>
+                <span style={{ position:"absolute",display:"inline-flex",width:"100%",height:"100%",borderRadius:"50%",background:"#fb923c",opacity:0.75,animation:"pulse 2s ease infinite" }} />
+                <span style={{ position:"relative",display:"inline-flex",borderRadius:"50%",width:8,height:8,background:accent }} />
+              </span>
+              LOG IN
+            </button>
+          )}
+        </div>
+      </nav>
+
+      {/* ─── HERO ─── */}
+      <section id="lp-hero" style={{ minHeight:"100vh",display:"flex",flexDirection:"column",overflow:"hidden",paddingTop:80,position:"relative",alignItems:"center",justifyContent:"center" }}>
+        <div style={{ position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:800,height:800,borderRadius:"50%",background:"rgba(249,115,22,0.05)",filter:"blur(120px)",animation:"pulse 4s ease infinite" }} />
+        <div style={{ display:"flex",flexDirection:"column",flex:1,zIndex:20,textAlign:"center",width:"100%",maxWidth:1152,padding:"0 24px",position:"relative",alignItems:"center",justifyContent:"center" }}>
+          <div style={{ marginBottom:48,cursor:"default" }}>
+            <h1 className="lp-hover-float lp-hero-title" style={{ fontSize:"clamp(48px, 11vw, 136px)",lineHeight:0.85,backgroundImage:"linear-gradient(to bottom,#fff,#e5e7eb,#6b7280)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,letterSpacing:"-0.05em",paddingBottom:8,userSelect:"none",transition:"all 0.7s ease-in-out",mixBlendMode:"overlay" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "#F97316";
+                e.currentTarget.style.backgroundImage = "none";
+                e.currentTarget.style.WebkitTextFillColor = "#F97316";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "transparent";
+                e.currentTarget.style.backgroundImage = "linear-gradient(to bottom,#fff,#e5e7eb,#6b7280)";
+                e.currentTarget.style.WebkitTextFillColor = "transparent";
+              }}
+            >
+              Redefining<br />Monster
+            </h1>
+          </div>
+          <div className="lp-hero-subtitle" style={{ display:"flex",flexDirection:"row",textAlign:"center",borderTop:`1px solid rgba(249,115,22,0.5)`,paddingTop:24,gap:32,alignItems:"center",marginBottom:48,opacity:0,animation:"lp-fadeIn 0.8s 1.5s forwards",flexWrap:"wrap",justifyContent:"center" }}>
+            <div style={{ fontSize:14,color:"#9CA3AF",letterSpacing:"0.1em",fontFamily:"monospace" }}>AI-Powered CI/CD Healing</div>
+            <div style={{ fontSize:14,color:"#D1D5DB",letterSpacing:"0.1em",fontFamily:"monospace" }}>Seamless Workflow Automation</div>
+            <div style={{ fontSize:14,color:"#6B7280",letterSpacing:"0.1em",fontFamily:"monospace" }}>Enterprise-Scale Efficiency</div>
+          </div>
+          <div style={{ opacity:0,animation:"lp-slideUp 0.8s 1.8s forwards" }}>
+            <button onClick={onEnter} className="lp-hero-cta" style={{ display:"inline-flex",alignItems:"center",gap:12,padding:"16px 40px",background:accent,color:"#fff",fontWeight:600,borderRadius:9999,overflow:"hidden",transition:"all 0.3s",border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:16,letterSpacing:"-0.02em" }}
+              onMouseEnter={(e)=>{e.currentTarget.style.background="#ea580c";e.currentTarget.style.boxShadow="0 0 40px rgba(249,115,22,0.4)";e.currentTarget.style.transform="scale(1.05)";}}
+              onMouseLeave={(e)=>{e.currentTarget.style.background=accent;e.currentTarget.style.boxShadow="none";e.currentTarget.style.transform="scale(1)";}}
+            >
+              {isLoggedIn ? "GO TO DASHBOARD" : "GET STARTED"} →
+            </button>
+          </div>
+        </div>
+        <div style={{ position:"absolute",bottom:32,left:"50%",transform:"translateX(-50%)",opacity:0,animation:"lp-fadeIn 1s 2.5s forwards",display:"flex",flexDirection:"column",alignItems:"center",gap:12,zIndex:20 }}>
+          <div style={{ width:1,height:40,background:"linear-gradient(to bottom,transparent,#F97316,transparent)" }} />
+          <span style={{ fontSize:10,textTransform:"uppercase",color:"#6B7280",letterSpacing:"0.2em",fontFamily:"monospace",animation:"pulse 2s ease-in-out infinite" }}>SLIDE FOR MORE</span>
+        </div>
+      </section>
+
+      {/* ─── ABOUT ─── */}
+      <section id="lp-about" style={{ background:"#030712",borderTop:"1px solid rgba(255,255,255,0.05)",padding:"128px 24px",position:"relative" }}>
+        <div style={{ maxWidth:1280,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))",gap:80,alignItems:"center" }}>
+          <div className="lp-reveal" style={{ display:"flex",flexDirection:"column",gap:40 }}>
+            <div style={{ display:"flex",alignItems:"center",gap:12,color:accent }}>
+              <span style={{ fontSize:24 }}>◇</span>
+              <span style={{ textTransform:"uppercase",fontSize:12,letterSpacing:"0.2em",fontFamily:"monospace" }}>About Us</span>
+            </div>
+            <h2 className="lp-section-title" style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:48,fontWeight:600,letterSpacing:"-0.02em",lineHeight:1.15 }}>Where Human Intuition<br/><span style={{color:"#6B7280"}}>Meets Algorithmic Precision.</span></h2>
+            <p style={{ fontSize:18,fontWeight:300,color:"#9CA3AF",lineHeight:1.7 }}>Monster is not just a tool; it's an AI-native DevOps partner. Our multi-agent system merges deep CI/CD expertise with cutting-edge LLM technology to auto-detect, fix, and verify pipeline failures — turning hours of debugging into seconds.</p>
+            <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:24,paddingTop:16 }}>
+              {[
+                { icon:"⚡", title:"7 Specialized Agents", desc:"Multi-agent LangGraph system for clone, detect, analyze, fix, apply, test, commit." },
+                { icon:"∞", title:"Auto-Healing Pipelines", desc:"Automatically fix linting, syntax, logic, type errors, imports and indentation issues." }
+              ].map((item,i) => (
+                <div key={i} className="lp-feature-card" style={{ padding:24,borderRadius:12,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.02)",transition:"background 0.3s" }}
+                  onMouseEnter={(e)=>e.currentTarget.style.background="rgba(255,255,255,0.05)"}
+                  onMouseLeave={(e)=>e.currentTarget.style.background="rgba(255,255,255,0.02)"}
+                >
+                  <div style={{ fontSize:32,marginBottom:12,color:accent }}>{item.icon}</div>
+                  <div style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:20,fontWeight:700,marginBottom:4 }}>{item.title}</div>
+                  <div style={{ textTransform:"uppercase",fontSize:11,color:"#6B7280",letterSpacing:"0.04em",fontFamily:"monospace" }}>{item.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="lp-reveal" style={{ position:"relative",height:500,width:"100%" }}>
+            <div style={{ position:"absolute",inset:0,background:"linear-gradient(to top right,rgba(249,115,22,0.2),rgba(168,85,247,0.2))",borderRadius:16,filter:"blur(48px)",opacity:0.3 }} />
+            <div style={{ position:"relative",width:"100%",height:"100%",transition:"all 0.7s ease-out" }}>
+              <div style={{ position:"absolute",inset:0,background:"#111827",border:"1px solid rgba(255,255,255,0.1)",borderRadius:16,overflow:"hidden",boxShadow:"0 25px 50px rgba(0,0,0,0.25)",display:"flex",flexDirection:"column" }}>
+                <div style={{ height:32,borderBottom:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",display:"flex",alignItems:"center",padding:"0 16px",gap:8 }}>
+                  <div style={{ width:12,height:12,borderRadius:"50%",background:"rgba(239,68,68,0.5)" }} />
+                  <div style={{ width:12,height:12,borderRadius:"50%",background:"rgba(234,179,8,0.5)" }} />
+                  <div style={{ width:12,height:12,borderRadius:"50%",background:"rgba(34,197,94,0.5)" }} />
+                </div>
+                <div style={{ flex:1,position:"relative",overflow:"hidden",padding:24,fontFamily:"monospace",fontSize:13,color:"#9CA3AF",lineHeight:1.8 }}>
+                  <div style={{color:accent}}>$ monster run --repo github.com/org/project</div>
+                  <div style={{color:"#6B7280"}}>→ Cloning repository...</div>
+                  <div style={{color:"#6B7280"}}>→ Running CI/CD pipeline...</div>
+                  <div style={{color:"#ef4444"}}>✗ 11 failures detected</div>
+                  <div style={{color:"#6B7280"}}>→ Analyzing with LangGraph agents...</div>
+                  <div style={{color:"#6B7280"}}>→ Generating fixes with GPT-4...</div>
+                  <div style={{color:"#6B7280"}}>→ Applying patches...</div>
+                  <div style={{color:"#22c55e"}}>✓ 10/11 fixes applied successfully</div>
+                  <div style={{color:"#22c55e"}}>✓ CI/CD pipeline PASSED</div>
+                  <div style={{color:accent,marginTop:16}}>Score: 107 (base:100 + speed:+10 - efficiency:-3)</div>
+                  <div style={{ position:"absolute",bottom:24,left:24,right:24,background:"rgba(0,0,0,0.6)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,padding:16,backdropFilter:"blur(12px)" }}>
+                    <div style={{ display:"flex",justifyContent:"space-between",color:accent,marginBottom:8 }}>
+                      <span>pipeline_healing...</span><span>98%</span>
+                    </div>
+                    <div style={{ width:"100%",height:4,background:"#1f2937",borderRadius:4,overflow:"hidden" }}>
+                      <div style={{ height:"100%",background:accent,width:"98%",borderRadius:4 }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── PROCESS ─── */}
+      <section id="lp-process" style={{ padding:"96px 24px",position:"relative",background:"#030712",borderTop:"1px solid rgba(255,255,255,0.05)" }}>
+        <div style={{ maxWidth:1280,margin:"0 auto" }}>
+          <div className="lp-reveal" style={{ marginBottom:64 }}>
+            <h2 className="lp-section-title" style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:36,fontWeight:700,letterSpacing:"-0.02em",color:"#fff",marginBottom:16 }}>How It Works</h2>
+            <p style={{ color:"#6B7280",maxWidth:600,fontSize:18 }}>A systematic approach to autonomous CI/CD healing.</p>
+          </div>
+          <div style={{ display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(250px, 1fr))",gap:32 }}>
+            {[
+              { icon:"🔍",num:"01",title:"Clone & Detect",desc:"Clones your repository, creates a fix branch, runs the existing CI/CD pipeline to detect failures." },
+              { icon:"🧠",num:"02",title:"AI Analysis",desc:"LangGraph multi-agent system analyzes root causes using GPT-4 to understand each failure deeply." },
+              { icon:"⚡",num:"03",title:"Auto-Fix",desc:"Generates, applies, and validates code fixes across linting, syntax, logic, type, and import errors." },
+              { icon:"🚀",num:"04",title:"Verify & Ship",desc:"Re-runs CI/CD pipeline, scores the fix quality, commits with [AI-AGENT] prefix, and pushes to branch." }
+            ].map((step,i) => (
+              <div key={i} className="lp-reveal lp-process-card" style={{ position:"relative",padding:32,border:"1px solid rgba(255,255,255,0.05)",background:"rgba(255,255,255,0.01)",borderRadius:16,transition:"all 0.5s",cursor:"default",transitionDelay:`${i*100}ms` }}
+                onMouseEnter={(e)=>{e.currentTarget.style.background="rgba(255,255,255,0.03)";e.currentTarget.querySelector('.lp-topline').style.opacity="1";}}
+                onMouseLeave={(e)=>{e.currentTarget.style.background="rgba(255,255,255,0.01)";e.currentTarget.querySelector('.lp-topline').style.opacity="0";}}
+              >
+                <div className="lp-topline" style={{ position:"absolute",top:0,left:0,width:"100%",height:1,background:"linear-gradient(to right,transparent,rgba(249,115,22,0.5),transparent)",opacity:0,transition:"opacity 0.5s" }} />
+                <div style={{ marginBottom:24,display:"flex",justifyContent:"space-between",alignItems:"flex-start" }}>
+                  <span style={{ fontSize:32 }}>{step.icon}</span>
+                  <span style={{ fontFamily:"monospace",fontSize:12,color:accent,letterSpacing:"0.2em",background:"rgba(249,115,22,0.1)",padding:"4px 8px",borderRadius:4 }}>{step.num}</span>
+                </div>
+                <h3 style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:20,fontWeight:500,color:"#fff",marginBottom:12 }}>{step.title}</h3>
+                <p style={{ fontSize:14,color:"#6B7280",lineHeight:1.6,fontWeight:300 }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FEATURES ─── */}
+      <section style={{ padding:"96px 24px",borderTop:"1px solid rgba(255,255,255,0.05)",background:"#050505" }}>
+        <div style={{ maxWidth:1600,margin:"0 auto" }}>
+          <div className="lp-reveal" style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:48,flexWrap:"wrap",gap:16 }}>
+            <div>
+              <h2 className="lp-section-title" style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:36,fontWeight:600,letterSpacing:"-0.02em",color:"#fff",marginBottom:8 }}>Supported Bug Types</h2>
+              <p style={{ color:"#6B7280",fontWeight:300 }}>Our agents handle these failure categories automatically.</p>
+            </div>
+          </div>
+          <div style={{ display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(280px, 1fr))",gap:24 }}>
+            {[
+              { tag:"LINTING",label:"Code Style Issues",color:"#3b82f6",desc:"Remove unused imports, enforce code standards, fix formatting" },
+              { tag:"SYNTAX",label:"Parse Errors",color:"#eab308",desc:"Missing colons, brackets, invalid expressions, broken arrow functions" },
+              { tag:"LOGIC",label:"Runtime Errors",color:"#a855f7",desc:"Off-by-one errors, wrong conditions, incorrect variable references" },
+              { tag:"TYPE_ERROR",label:"Type Mismatches",color:"#ef4444",desc:"Wrong type annotations, incompatible assignments, missing casts" },
+              { tag:"IMPORT",label:"Missing Imports",color:"#22c55e",desc:"Add required imports, fix module paths, resolve dependencies" },
+              { tag:"INDENTATION",label:"Whitespace Issues",color:"#6b7280",desc:"Normalize indentation, fix mixed tabs/spaces, correct nesting" }
+            ].map((bug,i) => (
+              <div key={i} className="lp-reveal lp-feature-card" style={{ padding:32,borderRadius:12,border:"1px solid rgba(255,255,255,0.05)",background:"rgba(255,255,255,0.01)",transition:"all 0.5s",cursor:"default" }}
+                onMouseEnter={(e)=>e.currentTarget.style.background="rgba(255,255,255,0.03)"}
+                onMouseLeave={(e)=>e.currentTarget.style.background="rgba(255,255,255,0.01)"}
+              >
+                <div style={{ display:"inline-block",padding:"4px 12px",borderRadius:20,background:bug.color+"20",color:bug.color,fontSize:11,fontWeight:600,letterSpacing:"0.04em",marginBottom:16,fontFamily:"monospace" }}>{bug.tag}</div>
+                <h3 style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:22,fontWeight:500,color:"#fff",marginBottom:8 }}>{bug.label}</h3>
+                <p style={{ fontSize:14,color:"#6B7280",lineHeight:1.6,fontWeight:300 }}>{bug.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── CONTACT / CTA ─── */}
+      <section style={{ minHeight:"100vh",display:"flex",overflow:"hidden",background:"#030712",padding:"96px 0",position:"relative",alignItems:"center",justifyContent:"center" }}>
+        <div style={{ position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none" }}>
+          <div style={{ position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:800,height:800,background:"linear-gradient(to bottom,rgba(249,115,22,0.1),transparent)",borderRadius:"50%",filter:"blur(120px)",opacity:0.2 }} />
+        </div>
+        <div className="lp-reveal" style={{ zIndex:10,width:"100%",maxWidth:768,padding:"0 32px",position:"relative" }}>
+          <div style={{ textAlign:"center",marginBottom:64 }}>
+            <div style={{ width:64,height:64,margin:"0 auto 24px",borderRadius:16,background:"linear-gradient(to bottom right,#1f2937,#000)",border:"1px solid rgba(255,255,255,0.1)",display:"flex",alignItems:"center",justifyContent:"center" }}>
+              <span style={{ fontSize:32 }}>🚀</span>
+            </div>
+            <h2 className="lp-section-title" style={{ fontFamily:"'Space Grotesk',sans-serif",fontSize:48,fontWeight:700,letterSpacing:"-0.02em",marginBottom:12 }}>Ready to heal your pipelines?</h2>
+            <p style={{ color:"#6B7280" }}>Start using Monster to automatically fix CI/CD failures with AI.</p>
+          </div>
+          <div style={{ textAlign:"center" }}>
+            <button onClick={onEnter} className="lp-hero-cta" style={{ padding:"16px 48px",background:accent,color:"#fff",fontWeight:700,borderRadius:9999,border:"none",cursor:"pointer",fontFamily:"'Space Grotesk',sans-serif",fontSize:16,transition:"all 0.3s",letterSpacing:"-0.01em" }}
+              onMouseEnter={(e)=>{e.currentTarget.style.background="#ea580c";e.currentTarget.style.boxShadow="0 0 40px rgba(249,115,22,0.4)";e.currentTarget.style.transform="scale(1.05)";}}
+              onMouseLeave={(e)=>{e.currentTarget.style.background=accent;e.currentTarget.style.boxShadow="none";e.currentTarget.style.transform="scale(1)";}}
+            >
+              {isLoggedIn ? "GO TO DASHBOARD →" : "GET STARTED →"}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ─── */}
+      <footer style={{ borderTop:"1px solid rgba(255,255,255,0.05)",background:"#030712",padding:"48px 24px" }}>
+        <div style={{ maxWidth:1280,margin:"0 auto",display:"flex",justifyContent:"space-between",alignItems:"center" }}>
+          <div style={{ display:"flex",alignItems:"center",gap:8 }}>
+            <div style={{ width:16,height:16,borderRadius:8,background:"linear-gradient(135deg,#fb923c,#ea580c)" }} />
+            <span style={{ fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,color:"#fff",letterSpacing:"-0.02em" }}>MONSTER</span>
+          </div>
+          <div style={{ fontSize:10,textTransform:"uppercase",color:"#4B5563",letterSpacing:"0.2em",fontFamily:"monospace" }}>Team Jigyasa • RIFT 2026</div>
+          <div style={{ display:"flex",gap:24,color:"#6B7280" }}>
+            <span style={{ fontSize:12,fontFamily:"monospace" }}>Built with AI</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
 /* ─── MAIN APP ───────────────────────────────────────────────────────── */
 export default function App() {
   const [showLanding, setShowLanding] = useState(true);
@@ -2587,218 +3090,15 @@ export default function App() {
 
   if (showLanding) {
     return (
-      <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden", background: "#0a0a20" }}>
-        <GlobalStyles />
-        {/* ── Aurora Background CSS ── */}
-        <style>{`
-          @keyframes aurora1 {
-            0%,100% { transform: translate(-10%, -10%) rotate(0deg) scale(1.1); }
-            50%     { transform: translate(10%, 10%) rotate(-15deg) scale(1.4); }
-          }
-          @keyframes aurora2 {
-            0%,100% { transform: translate(10%, 10%) rotate(10deg) scale(1.2); }
-            50%     { transform: translate(-15%, -10%) rotate(0deg) scale(1.5); }
-          }
-          @keyframes aurora3 {
-            0%,100% { transform: translate(0, 5%) rotate(-5deg) scale(1.3); }
-            50%     { transform: translate(20%, -15%) rotate(15deg) scale(1.1); }
-          }
-          @keyframes landingIn {
-            from { opacity:0; transform: translateY(24px); }
-            to   { opacity:1; transform: translateY(0); }
-          }
-          .landing-hero { animation: landingIn 0.7s cubic-bezier(.22,1,.36,1) 0.1s both; }
-          .landing-cta:hover {
-            box-shadow: 0 0 32px rgba(99, 102, 241, 0.45) !important;
-            transform: translateY(-2px) !important;
-            background: rgba(255,255,255,0.15) !important;
-          }
-          .landing-login:hover {
-            background: rgba(255,255,255,0.18) !important;
-          }
-        `}</style>
-
-        {/* Deep dark base */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 0,
-          background: "radial-gradient(ellipse at bottom, #111130 0%, #060614 100%)",
-        }} />
-
-        {/* Aurora Blurs */}
-        <div style={{ position: "absolute", inset: 0, zIndex: 1, filter: "blur(120px)", opacity: 0.8 }}>
-          {/* Teal Aurora */}
-          <div style={{
-            position: "absolute", width: "70%", height: "60%",
-            background: "linear-gradient(135deg, rgba(8,145,178,0.7) 0%, transparent 80%)",
-            top: "-10%", left: "-10%",
-            borderRadius: "40% 60% 70% 30%",
-            animation: "aurora1 18s ease-in-out infinite",
-          }} />
-          {/* Deep Purple / Pink Aurora */}
-          <div style={{
-            position: "absolute", width: "80%", height: "70%",
-            background: "linear-gradient(135deg, rgba(147,51,234,0.6) 0%, rgba(192,38,211,0.2) 80%)",
-            bottom: "-20%", right: "-10%",
-            borderRadius: "60% 40% 30% 70%",
-            animation: "aurora2 22s ease-in-out infinite",
-          }} />
-          {/* Bright Indigo Core */}
-          <div style={{
-            position: "absolute", width: "60%", height: "50%",
-            background: "radial-gradient(circle, rgba(79,70,229,0.5) 0%, transparent 70%)",
-            top: "20%", left: "20%",
-            animation: "aurora3 15s ease-in-out infinite",
-          }} />
-        </div>
-
-        {/* ── Navbar ── */}
-        <nav style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: 64, zIndex: 10,
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "0 40px",
-        }}>
-          {/* Brand */}
-          <div style={{
-            fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 17,
-            color: "#fff", letterSpacing: "0.02em",
-          }}>
-            RIFT 2026
-          </div>
-          {/* Login / Profile */}
-          {isLoggedIn && userProfile ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <img
-                src={userProfile.avatar_url}
-                alt={userProfile.username}
-                style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.2)" }}
-              />
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#fff", fontWeight: 500 }}>
-                {userProfile.username}
-              </span>
-            </div>
-          ) : (
-            <button
-              className="landing-login"
-              onClick={handleLogin}
-              style={{
-                padding: "8px 22px",
-                background: "rgba(255,255,255,0.10)",
-                color: "#fff",
-                border: "1px solid rgba(255,255,255,0.25)",
-                borderRadius: 50,
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: "pointer",
-                backdropFilter: "blur(10px)",
-                WebkitBackdropFilter: "blur(10px)",
-                transition: "background 0.2s ease",
-              }}
-            >
-              Log in
-            </button>
-          )}
-        </nav>
-
-        {/* ── Hero ── */}
-        <div style={{
-          position: "relative", zIndex: 5,
-          minHeight: "100vh",
-          display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center",
-          textAlign: "center",
-          padding: "80px 32px 48px",
-        }}>
-          {/* App icon */}
-          <div className="landing-icon" style={{
-            width: 88, height: 88, borderRadius: 22,
-            background: "#fff",
-            boxShadow: "0 8px 40px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.3)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            marginBottom: 32,
-            flexShrink: 0,
-          }}>
-            {/* Terminal-style pipeline icon in brand gradient */}
-            <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-              <defs>
-                <linearGradient id="iconGrad" x1="0" y1="0" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#4f8ef7" />
-                  <stop offset="1" stopColor="#8b5cf6" />
-                </linearGradient>
-              </defs>
-              <rect width="52" height="52" rx="14" fill="url(#iconGrad)" />
-              <polyline points="14,20 22,26 14,32" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              <line x1="26" y1="32" x2="38" y2="32" stroke="white" strokeWidth="3" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          {/* Title */}
-          <div className="landing-hero">
-            <h1 style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "clamp(52px, 8vw, 80px)",
-              fontWeight: 700,
-              color: "#fff",
-              margin: "0 0 18px",
-              lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-            }}>
-              Monster
-            </h1>
-
-            {/* Subtitle */}
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "clamp(14px, 2vw, 17px)",
-              color: "rgba(255,255,255,0.72)",
-              maxWidth: 540,
-              margin: "0 auto 36px",
-              lineHeight: 1.6,
-            }}>
-              Automatically detect and fix CI/CD pipeline failures with AI-powered analysis. Built for RIFT 2026.
-            </p>
-
-            {/* CTA Button */}
-            <button
-              className="landing-cta"
-              onClick={() => {
-                setShowLanding(false);
-                if (isLoggedIn) setActivePage("dashboard");
-              }}
-              style={{
-                padding: "16px 44px",
-                background: "rgba(255,255,255,0.08)",
-                color: "#fff",
-                borderRadius: 50,
-                border: "1px solid rgba(255,255,255,0.2)",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: "pointer",
-                transition: "all 0.22s ease",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-                letterSpacing: "0.02em",
-              }}
-            >
-              {isLoggedIn ? "Go to Dashboard →" : "Get Started →"}
-            </button>
-
-            {/* Team tag */}
-            <p style={{
-              marginTop: 48,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 13,
-              color: "rgba(255,255,255,0.38)",
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-            }}>
-              Team Jigyasa
-            </p>
-          </div>
-        </div>
-      </div>
+      <LandingPage
+        isLoggedIn={isLoggedIn}
+        userProfile={userProfile}
+        handleLogin={handleLogin}
+        onEnter={() => {
+          setShowLanding(false);
+          if (isLoggedIn) setActivePage("dashboard");
+        }}
+      />
     );
   }
 
